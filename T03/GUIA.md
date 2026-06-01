@@ -361,48 +361,5 @@ El filtratge actiu de FSRM analitza la **signatura interna** del fitxer (els seu
 
 ---
 
-## 5. Proves de Funcionament (des de client Windows 10/11)
-
-Per verificar que tota la infraestructura funciona correctament, s'han realitzat les següents comprovacions des d'un client unit al domini:
-
-### 5.1 Verificació d'accés i visibilitat per perfil d'usuari
-
-| Tipus d'usuari | Carpetes visibles | Unitat C: | Pot escriure? |
-|----------------|-------------------|-----------|---------------|
-| **Transport** | Veu `Public` i `Operacions` | No apareix | Sí a `Operacions`, només lectura a `Public` |
-| **Direccio** | Veu `Public`, `Operacions` i `Direccio` | Sí (C:) | Sí a `Direccio`, lectura a `Public` |
-| **Administracio** | Veu `Public` i `Operacions` (no veu `Direccio` per ABE) | No apareix | Només lectura a `Public` |
-
-La carpeta `Direccio` no apareix als usuaris que no en formen part gràcies a l'**ABE** configurat tant al Server Manager com a PowerShell.
-
-### 5.2 Prova de filtratge de fitxers (Operacions)
-
-- **Intent 1:** Copiar `notepad.exe` a `\\FL11\Operacions` > **Bloquejat per FSRM**.
-- **Intent 2:** Renombrar `notepad.exe` a `notepad.txt` i copiar-lo > **Continua bloquejat**.  
-  Això demostra que el filtratge actiu no es deixa enganyar pel canvi d'extensió.
-
-### 5.3 Prova de quota (Public)
-
-- Omplir la carpeta `Public` fins a 180 MB (90% de 200 MB).
-- Resultat: Apareix l'avís personalitzat configurat al FSRM.
-- Intentar superar els 200 MB: el sistema denega l'escriptura amb error d'**espai insuficient** (comportament de *Hard Quota*).
-
----
-
-## 6. Conclusions i Millores Aplicades
-
-S'ha aconseguit implementar una infraestructura de fitxers **segura, organitzada i controlada** per a FoodLogistic, complint tots els requisits de l'enunciat:
-
-- **Tres vies d'administració demostrades:** Explorador de fitxers (GUI bàsica), Server Manager (GUI avançada) i PowerShell (línia de comandes/scripting).
-- **Seguretat per capes:** combinació òptima de permisos SMB + NTFS + ABE + GPOs filtrades.
-- **Control d'espai:** quotes NTFS per volum (500 MB/usuari) i quotes FSRM per carpeta (200 MB a Public amb avís al 90%).
-- **Prevenció de contingut no desitjat:** File Screen actiu a `Operacions` bloquejant executables i multimèdia.
-
-### Recomanacions futures
-
-- Implantar **DFS Namespace** per unificar els camins UNC i facilitar la migració futura de servidors.
-- Implementar **Dynamic Access Control (DAC)** per a una gestió més granular basada en atributs d'usuari.
-- Configurar **Shadow Copies** (còpies d'ombra) per permetre la recuperació de fitxers per part dels usuaris sense intervenció de l'administrador.
-"""
 
 
